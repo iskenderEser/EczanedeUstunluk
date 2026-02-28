@@ -8,7 +8,7 @@
 <style>
 :root {
   --red: #e63946;
-  --green: #00a672;
+  --green: #007d0c;
   --bg: #ffffff;
   --surface: #f5f7fa;
   --border: #dde1ea;
@@ -16,9 +16,7 @@
   --muted: #6b7280;
   --light: #f9fafb;
 }
-
 * { box-sizing: border-box; margin: 0; padding: 0; }
-
 body {
   background: var(--bg);
   color: var(--text);
@@ -26,699 +24,493 @@ body {
   min-height: 100vh;
   padding: 40px 20px 80px;
 }
-
-.container { max-width: 860px; margin: 0 auto; }
-
-header {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  margin-bottom: 40px;
-}
-
-.eczane-logo {
-  width: 58px; height: 58px;
-  background: var(--red);
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-  box-shadow: 0 4px 16px rgba(230,57,70,0.25);
-}
-.eczane-logo span {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 38px; color: #fff; line-height: 1;
-}
-
+.container { max-width: 960px; margin: 0 auto; }
+header { display: block; text-align: center; margin-bottom: 40px; }
 .header-text h1 {
   font-family: 'Bebas Neue', sans-serif;
   font-size: clamp(28px, 5vw, 48px);
   letter-spacing: 2px; line-height: 1;
 }
-.header-text h1 span { color: var(--red); }
-.header-text p { margin-top: 5px; color: var(--muted); font-size: 13px; }
 
-/* ACCORDION */
+/* Geri ödemesiz modda çıktı tek sütun */
+body.mod-geri-odemsiz .cikti-elden-wrap { display: none !important; }
+body.mod-geri-odemsiz .cikti-deger-cell { grid-template-columns: 1fr !important; }
+body.mod-geri-odemsiz .cikti-kamu-elden-baslik { display: none !important; }
+body.mod-geri-odemsiz .geri-odemeli-only { display: none !important; }
+
+/* DSF manuel/otomatik görünüm */
+.dsf-input-otomatik { background: #f0fdf8 !important; color: #007d0c !important; border-color: #007d0c !important; cursor: default; }
+.dsf-input-manuel { background: #fff !important; color: var(--text) !important; border-color: var(--border) !important; cursor: text; }
+
+
+
+
 .accordion { display: flex; flex-direction: column; gap: 16px; }
-
-.acc-item {
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  overflow: hidden;
-}
-
+.acc-item { border: 1px solid var(--border); border-radius: 16px; overflow: visible; }
 .acc-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 20px 24px;
-  cursor: pointer;
-  user-select: none;
-  transition: background 0.15s;
-  background: var(--surface);
+  display: flex; align-items: center; gap: 16px;
+  padding: 20px 24px; cursor: pointer; user-select: none;
+  transition: background 0.15s; background: var(--surface); border-radius: 16px;
 }
-
 .acc-header:hover { background: #eef1f6; }
-
-.acc-icon {
-  width: 44px; height: 44px;
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 22px; flex-shrink: 0;
-}
-
-.acc-icon.geri-odemeli { background: rgba(230,57,70,0.1); }
-.acc-icon.geri-odemsiz { background: rgba(0,166,114,0.1); }
-
-.acc-title {
-  flex: 1;
-}
-.acc-title h3 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 20px; letter-spacing: 1px;
-}
-.acc-title p { font-size: 12px; color: var(--muted); margin-top: 2px; }
-
-.acc-chevron {
-  font-size: 18px; color: var(--muted);
-  transition: transform 0.25s;
-}
+.acc-title { flex: 1; }
+.acc-title h3 { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1px; }
+.acc-chevron { font-size: 18px; color: var(--muted); transition: transform 0.25s; }
 .acc-item.open .acc-chevron { transform: rotate(180deg); }
+.acc-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+.acc-item.open .acc-body { max-height: 9999px; }
+.acc-content { padding: 16px; border-top: 1px solid var(--border); }
 
-.acc-body {
-  max-height: 0;
+.inner-acc-item { border-radius: 14px; border: 1px solid var(--border); }
+.inner-acc-item + .inner-acc-item { margin-top: 12px; }
+.inner-acc-body { max-height: 0; overflow: hidden; transition: max-height 0.6s ease; }
+.inner-acc-item.open .inner-acc-body { max-height: 9999px; }
+.inner-acc-item.open .acc-chevron { transform: rotate(180deg); }
+.inner-acc-header {
+  display: flex; align-items: center; gap: 16px;
+  padding: 14px 20px; cursor: pointer; user-select: none;
+  background: #f9fafb; border-radius: 14px;
+}
+
+/* ── YATAY KAYDIRMALI TABLO ── */
+.tablo-scroll-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-top: 1px solid var(--border);
+}
+
+/* GİRDİLER */
+.girdi-tablo { display: flex; flex-direction: row; min-width: max-content; width: 100%; }
+
+.girdi-etiket-col {
+  min-width: 180px; width: 180px; max-width: 180px; flex-shrink: 0;
+  background: #f9fafb; border-right: 2px solid var(--border);
+  position: sticky; left: 0; z-index: 5;
   overflow: hidden;
-  transition: max-height 0.4s ease;
-}
-.acc-item.open .acc-body { max-height: 2000px; }
-
-.acc-content { padding: 24px; border-top: 1px solid var(--border); }
-
-/* FORM GRID */
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 24px;
 }
 
-@media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+.girdi-urun-col { min-width: 220px; flex: 1; border-right: 1px solid var(--border); }
+.girdi-urun-col:last-child { border-right: none; }
 
-/* ── RESPONSIVE ─────────────────────────────────────────── */
-
-/* Tablet (768px altı) */
-@media (max-width: 768px) {
-  .container { padding: 12px; }
-  .acc-header { padding: 14px 16px; }
-  .field input, .field select { font-size: 13px; height: 40px; padding: 9px 12px; }
-  .cikti-input { width: 100%; font-size: 12px; }
-
-  /* 3'lü ve 4'lü grid'leri 2'ye indir */
-  .field.full [style*="grid-template-columns:1fr 1fr 1fr"],
-  div[style*="grid-template-columns:1fr 1fr 1fr"] { grid-template-columns: 1fr 1fr !important; }
-  div[style*="grid-template-columns:1fr 1fr 1fr 1fr"] { grid-template-columns: 1fr 1fr !important; }
+.girdi-etiket-cell {
+  padding: 10px 14px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; min-height: 64px;
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 1px; color: var(--muted); line-height: 1.4;
 }
-
-/* Mobil (480px altı) */
-@media (max-width: 480px) {
-  .container { padding: 8px; }
-  .acc-header { padding: 12px 14px; }
-  h1 { font-size: 28px !important; }
-
-  /* Tüm çoklu grid'leri tek kolona indir */
-  div[style*="grid-template-columns:1fr 1fr 1fr"],
-  div[style*="grid-template-columns:1fr 1fr 1fr 1fr"],
-  div[style*="grid-template-columns:1fr 1fr"] { grid-template-columns: 1fr !important; }
-
-  /* Çıktılar grid'i */
-  .ciktilar-grid { grid-template-columns: 1fr !important; }
-  .ciktilar-grid > div { border-right: none !important; border-bottom: 1px solid var(--border); }
-
-  /* Çıktılar tek grid */
-  div[style*="grid-template-columns:auto 1fr 1fr"] {
-    grid-template-columns: 1fr !important;
-  }
-  div[style*="grid-template-columns:auto 1fr 1fr"] > div[style*="display:contents"] > div {
-    border-right: none !important;
-    border-left: none !important;
-  }
-
-  .cikti-input { width: 100%; font-size: 12px; }
-  .field input, .field select { font-size: 13px; }
+.girdi-etiket-cell.baslik {
+  min-height: 96px; background: #f0fdf8;
+  border-bottom: 2px solid var(--border);
 }
-
-/* Küçük mobil (360px altı) */
-@media (max-width: 360px) {
-  h1 { font-size: 24px !important; }
-  .field label { font-size: 10px; }
-  .field input, .field select { font-size: 12px; height: 38px; }
+.girdi-etiket-cell.referans { min-height: 70px; }
+.girdi-etiket-cell.separator {
+  min-height: 24px; background: #f0f4ff;
+  border-bottom: 1px solid #c7d2fe;
+  font-size: 9px; color: #6366f1; letter-spacing: 1.5px; padding: 4px 14px;
 }
+.girdi-etiket-cell.last { border-bottom: none; }
 
-@media (max-width: 640px) {
-  .ciktilar-ust { grid-template-columns: 1fr !important; }
-  .ciktilar-ust > div:first-child { border-right: none !important; border-bottom: 1px solid var(--border); }
-  .ciktilar-alt { grid-template-columns: 1fr !important; }
-  .ciktilar-alt-etiket { border-right: none !important; border-bottom: none !important; font-weight:600; }
-  .ciktilar-alt-kamu { border-right: none !important; }
-  .ciktilar-alt-satir-1 > div { border-bottom: 1px dashed var(--border); }
-  .ciktilar-alt-satir-2 > div { border-bottom: none; }
+.girdi-input-cell {
+  padding: 10px 10px; border-bottom: 1px solid var(--border);
+  min-height: 64px; display: flex; align-items: center;
 }
-
-.form-grid .full { grid-column: 1 / -1; }
-
-.field label {
-  display: block;
-  font-size: 11px; font-weight: 600;
-  text-transform: uppercase; letter-spacing: 1.2px;
-  color: var(--muted); margin-bottom: 6px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+.girdi-input-cell.baslik {
+  min-height: 96px; flex-direction: column; align-items: stretch;
+  gap: 8px; background: linear-gradient(135deg, #f0fdf8, #e6f7f2);
+  border-bottom: 2px solid var(--border); justify-content: center; padding: 10px 12px;
 }
-
-.field label .hint {
-  font-size: 10px; font-weight: 400;
-  text-transform: none; letter-spacing: 0;
-  color: #9ca3af; margin-left: 4px;
+.girdi-input-cell.baslik.rakip-1 { background: linear-gradient(135deg, #d5f5e3, #b8edce); }
+.girdi-input-cell.baslik.rakip-2 { background: linear-gradient(135deg, #b8edce, #96e4b3); }
+.girdi-input-cell.referans { min-height: 70px; }
+.girdi-input-cell.separator {
+  min-height: 24px; background: #f0f4ff;
+  border-bottom: 1px solid #c7d2fe; padding: 0;
 }
+.girdi-input-cell.last { border-bottom: none; }
 
-.field input, .field select {
-  width: 100%;
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 11px 14px;
-  color: var(--text);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px; outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  height: 44px;
+.urun-baslik-isim { font-size: 13px; font-weight: 700; color: #007d0c; letter-spacing: 0.5px; }
+.urun-baslik-isim.rakip-1 { color: #006b0a; }
+.urun-baslik-isim.rakip-2 { color: #005a08; }
+.urun-baslik-aksiyonlar { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+
+.girdi-input-cell input,
+.girdi-input-cell select {
+  width: 100%; background: #fff; border: 1px solid var(--border);
+  border-radius: 10px; padding: 9px 12px; color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s; height: 42px;
 }
-
-.field input:focus, .field select:focus {
-  border-color: var(--red);
-  box-shadow: 0 0 0 3px rgba(230,57,70,0.1);
+.girdi-input-cell input:focus,
+.girdi-input-cell select:focus {
+  border-color: var(--red); box-shadow: 0 0 0 3px rgba(230,57,70,0.1);
 }
-
-.field input::placeholder { color: #c0c8d8; }
-
+.girdi-input-cell input::placeholder { color: #c0c8d8; }
+.girdi-input-cell input[readonly] {
+  background: #f0fdf8; border-color: #007d0c;
+  color: #007d0c; font-weight: 600; text-align: center;
+}
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 input[type=number] { -moz-appearance: textfield; }
-
-.field select {
+.girdi-input-cell select {
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 14px center;
-  padding-right: 36px; cursor: pointer;
+  background-repeat: no-repeat; background-position: right 10px center;
+  padding-right: 28px; cursor: pointer;
 }
 
-.inner-acc-body {
-  max-height: 0;
+/* ÇIKTILAR */
+.cikti-tablo { display: flex; flex-direction: row; min-width: max-content; width: 100%; }
+
+.cikti-etiket-col {
+  min-width: 180px; width: 180px; max-width: 180px; flex-shrink: 0;
+  background: #f9fafb; border-right: 2px solid var(--border);
+  position: sticky; left: 0; z-index: 5;
   overflow: hidden;
-  transition: max-height 0.4s ease;
-}
-.inner-acc-item.open .inner-acc-body { max-height: 2000px; }
-.inner-acc-item.open .acc-chevron { transform: rotate(180deg); }
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  gap: 8px; align-items: center;
-}
-.mf-sep { text-align: center; font-size: 18px; color: var(--muted); font-weight: 600; padding-top: 22px; }
-
-.kki-badge {
-  grid-column: 1 / -1;
-  background: linear-gradient(135deg, #fff5f5, #ffe8e8);
-  border: 1.5px solid rgba(230,57,70,0.3);
-  border-radius: 12px;
-  padding: 14px 18px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.kki-badge-label {
-  font-size: 10px; font-weight: 600;
-  text-transform: uppercase; letter-spacing: 1px;
-  color: var(--red); white-space: nowrap;
-}
-.kki-badge-value {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 32px; color: var(--red); line-height: 1;
-  white-space: nowrap;
-}
-.kki-badge-desc {
-  font-size: 11px; color: var(--muted); line-height: 1.5;
 }
 
-.ref-btn {
-  background: #fff;
-  border: 1.5px solid var(--border);
-  border-radius: 8px;
-  padding: 8px 14px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 12px; font-weight: 600;
-  color: var(--text); cursor: pointer;
-  transition: border-color 0.2s, background 0.2s;
-}
-.ref-btn:hover { border-color: var(--red); background: #fff5f5; color: var(--red); }
+.cikti-urun-col { min-width: 280px; flex: 1; border-right: 1px solid var(--border); }
+.cikti-urun-col:last-child { border-right: none; }
 
-/* CALC BUTTON */
-.btn-calc {
-  width: 100%;
-  background: var(--red);
-  color: #fff; border: none;
-  border-radius: 12px; padding: 14px;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 20px; letter-spacing: 1.5px;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.15s, box-shadow 0.15s;
+.cikti-etiket-cell {
+  padding: 12px 14px; border-bottom: 1px dashed var(--border);
+  display: flex; align-items: center;
+  font-size: 12px; font-weight: 500; color: var(--text); line-height: 1.5;
 }
-.btn-calc:hover {
-  background: #c1121f;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(230,57,70,0.25);
+.cikti-etiket-cell.baslik {
+  background: #f0fdf8; border-bottom: 2px solid var(--border);
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 1px; color: var(--muted);
 }
-.btn-calc.green { background: var(--green); }
-.btn-calc.green:hover { background: #008f62; box-shadow: 0 6px 20px rgba(0,166,114,0.25); }
+.cikti-etiket-cell.thick { border-bottom: 2px solid var(--border); }
+.cikti-etiket-cell.last { border-bottom: none; }
 
-/* RESULTS */
-.results {
-  margin-top: 24px;
-  display: none;
-}
-.results.show { display: block; }
+/* Satır yükseklikleri — etiket ve veri sütunları aynı olmalı */
+.cikti-row-baslik   { height: 72px; }
+.cikti-row-alis     { height: 88px; }
+.cikti-row-mf       { height: 88px; }
+.cikti-row-valor-t  { height: 88px; }
+.cikti-row-valor-f  { height: 88px; }
+.cikti-row-toplam-t { height: 88px; }
+.cikti-row-toplam-f { height: 88px; }
 
-.results-title {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 16px; letter-spacing: 1px;
-  color: var(--muted); margin-bottom: 14px;
-  text-transform: uppercase;
-}
-
-.result-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-@media (max-width: 600px) { .result-grid { grid-template-columns: 1fr 1fr; } }
-
-.cikti-satir {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin-bottom:12px;
-  gap:12px;
-}
-.cikti-label {
-  font-size:13px;
-  color:var(--text);
-  white-space:nowrap;
-}
-.cikti-input {
-  background:#f0fdf8;
-  border:1px solid #00a672;
-  color:#00a672;
-  font-weight:600;
-  border-radius:8px;
-  padding:8px 12px;
-  font-size:13px;
-  text-align:center;
-  width:120px;
-  outline:none;
-}
-
-/* Tüm readonly/otomatik inputlarda merkez hizalama */
-.field input[readonly] {
-  text-align:center;
-}
-
-.result-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 14px 16px;
-}
-
-.result-card .rc-label {
-  font-size: 10px; font-weight: 600;
-  text-transform: uppercase; letter-spacing: 1px;
-  color: var(--muted); margin-bottom: 6px;
-}
-
-.result-card .rc-value {
-  font-size: 20px; font-weight: 600;
-  color: var(--text); line-height: 1.2;
-}
-
-.result-card .rc-value.positive { color: var(--green); }
-.result-card .rc-value.negative { color: var(--red); }
-.result-card .rc-value.accent { color: var(--red); }
-
-.result-card .rc-sub {
-  font-size: 11px; color: var(--muted); margin-top: 3px;
-}
-
-.valör-box {
+.cikti-urun-baslik {
+  min-height: 72px; border-bottom: 2px solid var(--border);
   background: linear-gradient(135deg, #f0fdf8, #e6f7f2);
-  border: 1px solid rgba(0,166,114,0.25);
-  border-radius: 12px;
-  padding: 16px 20px;
-  display: flex; align-items: center; gap: 16px;
+  display: flex; flex-direction: column; justify-content: center;
 }
+.cikti-urun-baslik.rakip-1 { background: linear-gradient(135deg, #d5f5e3, #b8edce); }
+.cikti-urun-baslik.rakip-2 { background: linear-gradient(135deg, #b8edce, #96e4b3); }
 
-.valör-box .vb-icon { font-size: 28px; }
-.valör-box .vb-text { flex: 1; }
-.valör-box .vb-label { font-size: 11px; font-weight: 600; color: var(--green); text-transform: uppercase; letter-spacing: 1px; }
-.valör-box .vb-value { font-size: 22px; font-weight: 600; color: var(--text); margin-top: 2px; }
-.valör-box .vb-desc { font-size: 12px; color: var(--muted); margin-top: 3px; line-height: 1.5; }
-
-.divider { height: 1px; background: var(--border); margin: 20px 0; }
-
-.total-box {
-  background: var(--text);
-  border-radius: 12px;
-  padding: 18px 20px;
-  display: flex; justify-content: space-between; align-items: center;
+.cikti-urun-baslik-isim {
+  padding: 8px 12px 4px; font-size: 12px; font-weight: 700; color: #007d0c;
+  text-align: center;
 }
-.total-box .tb-label {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 18px; letter-spacing: 1px; color: #fff;
+.cikti-urun-baslik-isim.rakip-1 { color: #006b0a; }
+.cikti-urun-baslik-isim.rakip-2 { color: #005a08; }
+
+.cikti-kamu-elden-baslik { display: grid; grid-template-columns: 1fr 1fr; }
+.cikti-kamu-elden-baslik > div {
+  padding: 4px 12px 8px; font-size: 10px; font-weight: 600;
+  letter-spacing: 1px; color: var(--muted); text-transform: uppercase; text-align: center;
 }
-.total-box .tb-value {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 28px; color: #4ade80;
+.cikti-kamu-elden-baslik > div:first-child { border-right: 1px solid rgba(0,125,12,0.25); }
+
+.cikti-deger-cell {
+  display: grid; grid-template-columns: 1fr 1fr;
+  border-bottom: 1px dashed var(--border);
+}
+.cikti-deger-cell.thick { border-bottom: 2px solid var(--border); }
+.cikti-deger-cell.last { border-bottom: none; }
+.cikti-deger-cell.span2 { grid-template-columns: 1fr; }
+
+.cikti-kamu-wrap, .cikti-elden-wrap {
+  padding: 8px; display: flex; flex-direction: column;
+  gap: 4px; justify-content: center;
+}
+.cikti-kamu-wrap { border-right: 1px solid var(--border); }
+.cikti-deger-cell.span2 .cikti-kamu-wrap { border-right: none; padding: 8px 12px; }
+
+.cikti-input {
+  background: #f0fdf8; border: 1px solid #007d0c; color: #007d0c;
+  font-weight: 600; border-radius: 8px; padding: 6px 8px; font-size: 12px;
+  text-align: center; width: 100%; height: 36px; box-sizing: border-box; outline: none;
+}
+.cikti-pct {
+  background: #f0f4ff; border: 1px solid #6366f1; color: #6366f1;
+  font-weight: 600; border-radius: 8px; padding: 4px 8px; font-size: 11px;
+  text-align: center; width: 100%; height: 28px; box-sizing: border-box; outline: none;
+}
+.cikti-pct::placeholder { font-size: 8px; color: #c0c8d8; font-weight: 400; }
+
+/* Butonlar */
+.urun-ekle-btn {
+  display: inline-flex; align-items: center; padding: 3px 10px 3px 6px;
+  border-radius: 20px; background: #007d0c; color: white; font-size: 12px;
+  font-weight: 600; cursor: pointer; user-select: none; line-height: 1.4;
+}
+.urun-ekle-btn:hover { background: #006b0a; }
+.urun-kapat-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px;
+  color: #b0b8c8; font-size: 24px; font-weight: 300;
+  cursor: pointer; user-select: none; line-height: 1;
+  flex-shrink: 0; transition: color 0.2s;
+}
+.urun-kapat-btn:hover { color: #007d0c; }
+
+.result-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+@media (max-width: 600px) { .result-grid { grid-template-columns: 1fr 1fr; } }
+.result-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+.result-card .rc-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 6px; }
+.result-card .rc-value { font-size: 20px; font-weight: 600; color: var(--text); line-height: 1.2; }
+.result-card .rc-value.positive { color: #007d0c; }
+.result-card .rc-value.negative { color: var(--red); }
+.result-card .rc-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+@media (max-width: 480px) {
+  .container { padding: 8px; }
+  .girdi-etiket-col { min-width: 140px; width: 140px; }
+  .girdi-urun-col { min-width: 190px; }
+  .cikti-etiket-col { min-width: 160px; width: 160px; }
+  .cikti-urun-col { min-width: 230px; }
 }
 </style>
 </head>
 <body>
 <div class="container">
 
-  <header>
+  <header style="text-align:center;">
     <div class="header-text">
-      <h1><span style="color:#4b5563;">ECZANEDE</span> <span style="color:#00a672;">ÜSTÜNLÜK</span></h1>
-      
+      <h1><span style="color:#737373;">ECZANEDE</span> <span style="color:#007d0c;">ÜSTÜNLÜK</span></h1>
     </div>
   </header>
 
-  <div class="accordion">
-
-    <div class="acc-item open" id="acc-geri-odemeli">
-      <div class="acc-header" onclick="toggle('geri-odemeli')">
-        <div class="acc-title">
-          <h3>Geri Ödemeli Kârlılık Hesabı</h3>
-          
-        </div>
-        <div class="acc-chevron">▼</div>
+  <!-- SUB BAŞLIK + TOGGLE -->
+  <div style="text-align:center;margin-bottom:32px;">
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:#737373;margin-bottom:24px;">Ticari Avantaj Hesaplama</div>
+    <div style="display:inline-flex;align-items:center;gap:20px;">
+      <span id="lbl-geri-odemeli" style="font-size:15px;font-weight:600;color:#007d0c;transition:color 0.2s;">Geri Ödemeli</span>
+      <div id="toggle-btn" onclick="toggleMod()" style="width:56px;height:30px;background:#007d0c;border-radius:15px;cursor:pointer;position:relative;transition:background 0.3s;flex-shrink:0;">
+        <div id="toggle-knob" style="width:24px;height:24px;background:#fff;border-radius:50%;position:absolute;top:3px;left:3px;transition:left 0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2);"></div>
       </div>
-      <div class="acc-body">
-        <div class="acc-content">
-          <!-- GİRDİLER AKORDİYON -->
-          <div class="inner-acc-item open" id="acc-girdiler" style="border-radius:14px;margin-bottom:12px;border:1px solid var(--border);">
-            <div class="acc-header" onclick="event.stopPropagation(); innerToggle('girdiler')" style="border-radius:14px;background:#f9fafb;">
+      <span id="lbl-geri-odemsiz" style="font-size:15px;font-weight:600;color:#b0b8c8;transition:color 0.2s;">Geri Ödemesiz</span>
+    </div>
+  </div>
+
+  <div style="border: 1px solid var(--border); border-radius: 16px; overflow: visible;">
+    <div style="padding: 16px 20px; display:flex; align-items:center; justify-content:space-between; border-bottom: 1px solid var(--border); background: var(--surface); border-radius: 16px 16px 0 0;">
+      <h3 id="acc-main-baslik" style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1.5px;color:#737373;">Geri Ödemeli Ürünler İçin Ticari Avantaj Hesaplama</h3>
+      <div onclick="temizle()" style="font-size:11px;color:#b0b8c8;font-weight:500;cursor:pointer;padding:4px 10px;border-radius:20px;border:1px solid #d1d5db;transition:all 0.2s;white-space:nowrap;" onmouseover="this.style.color='#007d0c';this.style.borderColor='#007d0c'" onmouseout="this.style.color='#b0b8c8';this.style.borderColor='#d1d5db'">Temizle</div>
+    </div>
+    <div style="padding: 16px;">
+
+          <!-- GİRDİLER -->
+          <div class="inner-acc-item" id="acc-girdiler" style="margin-bottom:12px;">
+            <div class="inner-acc-header" onclick="event.stopPropagation(); innerToggle('girdiler')">
               <div class="acc-title">
                 <h3 style="font-size:13px;letter-spacing:1.5px;color:#6b7280;">GİRDİLER</h3>
               </div>
               <div class="acc-chevron">▼</div>
             </div>
             <div class="inner-acc-body">
-              <div style="padding:20px 20px 24px;border-top:1px solid var(--border);">
-          <div class="form-grid">
-            <div class="field full">
-              <label>Referans Uygulama Seçiniz</label>
-              <select id="go-urun-tipi" onchange="refUygulamaSecim(); hesaplaKamuDSF()">
-                <option value="" disabled selected></option>
-                <option value="fiyat_korumali">Fiyat Korumalı</option>
-                <option value="esdegeri_olmayan">Eşdeğeri Olmayan</option>
-                <option value="esdegerli_referans">Eşdeğeri Olan</option>
-                <option value="enteral">Enteral Beslenme</option>
-              </select>
-            </div>
+              <div class="tablo-scroll-wrap">
+                <div class="girdi-tablo" id="girdi-tablo">
 
-            <div class="field full" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:end;">
-              <div class="field" style="margin:0;">
-                <label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;">PSF <span class="hint">(KDV Dahil)</span></label>
-                <input type="number" id="go-psf" placeholder="örn. 200.00" step="0.01" oninput="psfDenKDVsiz()">
-              </div>
-              <div class="field" style="margin:0;">
-                <label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;">PSF <span class="hint">(KDV Hariç)</span></label>
-                <input type="text" id="go-psf-kdvsiz" placeholder="Otomatik" step="0.01" readonly style="background:#f0fdf8;border-color:#00a672;color:#00a672;font-weight:600;">
-              </div>
-              <div class="field" style="margin:0;">
-                <label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;">DSF <span class="hint">(KDV Hariç)</span></label>
-                <input type="text" id="go-dsf" placeholder="Otomatik" step="0.01" readonly style="background:#f0fdf8;border-color:#00a672;color:#00a672;font-weight:600;">
-              </div>
-            </div>
-
-            <div id="go-referans-tipi-satir" class="field full" style="display:none;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:end;">
-              <div style="grid-column:3;margin:0;">
-                <label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;">Referans Tipi</label>
-                <select id="go-referans-tipi" onchange="hesaplaKamuDSF()">
-                  <option value="" disabled selected></option>
-                  <option value="var">Referans Var</option>
-                  <option value="yok">Referansı Yok</option>
-                  <option value="maliyet">Maliyet Kartı Var</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="field full" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:end;">
-              <div class="field" style="margin:0;">
-                <label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;">Kamu PSF <span class="hint">(KDV Dahil)</span></label>
-                <input type="text" id="go-kamu-psf" placeholder="Otomatik" step="0.01" readonly style="background:#f0fdf8;border-color:#00a672;color:#00a672;font-weight:600;">
-              </div>
-              <div class="field" style="margin:0;">
-                <label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;">Kamu PSF <span class="hint">(KDV Hariç)</span></label>
-                <input type="text" id="go-kamu-psf-kdvsiz" placeholder="Otomatik" step="0.01" readonly style="background:#f0fdf8;border-color:#00a672;color:#00a672;font-weight:600;">
-              </div>
-              <div class="field" style="margin:0;">
-                <label style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;">Kamu DSF <span class="hint">(KDV Hariç)</span></label>
-                <input type="text" id="go-kamu-dsf" placeholder="Otomatik" step="0.01" readonly style="background:#f0fdf8;border-color:#00a672;color:#00a672;font-weight:600;">
-              </div>
-            </div>
-
-            <div class="field full" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:end;">
-              <div class="field" style="margin:0;">
-                <label>Satış Adedi</label>
-                <input type="number" id="go-satis-adet" placeholder="örn. 100" step="1" oninput="hesaplaOTS(); hesaplaFISS(); hesaplaSatisSartliDSF();">
-              </div>
-              <div class="field" style="margin:0;">
-                <label>MF</label>
-                <input type="text" id="go-mf" oninput="hesaplaOTS(); hesaplaSatisSartliDSF();">
-              </div>
-              <div class="field" style="margin:0;">
-                <label>Satış Şartlı DSF</label>
-                <input type="text" id="go-satis-sartli-dsf" placeholder="Otomatik" step="0.01" readonly style="background:#f0fdf8;border-color:#00a672;color:#00a672;font-weight:600;">
-              </div>
-            </div>
-
-            <div class="field full" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:end;">
-              <div class="field" style="margin:0;">
-                <label>Satış Vadesi <span class="hint">(gün)</span></label>
-                <input type="number" id="go-vade" placeholder="örn. 90" step="1" oninput="hesaplaCiktilar();">
-              </div>
-              <div class="field" style="margin:0;">
-                <label>Ort. Yıllık Mevduat Faizi <span class="hint">(%)</span></label>
-                <input type="number" id="go-faiz" placeholder="örn. 45" step="0.01" oninput="hesaplaCiktilar();">
-              </div>
-            </div>
-
-            <div style="grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:16px;align-items:end;">
-              <div class="field">
-                <label style="font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Günlük Satış Adedi</label>
-                <input type="number" id="go-gunluk-satis" placeholder="örn. 5" step="1" oninput="hesaplaOTS(); hesaplaFISS(); hesaplaCiktilar();">
-              </div>
-              <div class="field">
-                <label style="font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Tüketim Süresi</label>
-                <input type="number" id="go-tuketim-sure" readonly placeholder="gün" style="background:#f0fdf8;border-color:#00a672;color:#00a672;font-weight:600;">
-              </div>
-              <div class="field">
-                <label style="font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Fatura İçin Satış Süresi</label>
-                <input type="number" id="go-fatura-sure" readonly placeholder="gün" style="background:#f0fdf8;border-color:#00a672;color:#00a672;font-weight:600;">
-              </div>
-              <div class="field">
-                <label style="font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Geri Ödeme Süresi</label>
-                <input type="text" inputmode="numeric" pattern="[0-9]*" id="go-geri-odeme-sure-select" placeholder="gün" list="geri-odeme-liste" style="width:100%;" oninput="hesaplaCiktilar();">
-                <datalist id="geri-odeme-liste">
-                  <option value="45">
-                  <option value="60">
-                  <option value="75">
-                  <option value="90">
-                  <option value="105">
-                  <option value="120">
-                </datalist>
-              </div>
-            </div>
-          </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- ÇIKTILAR AKORDİYON -->
-          <div class="inner-acc-item open" id="acc-ciktilar" style="border-radius:14px;border:1px solid var(--border);">
-            <div class="acc-header" onclick="event.stopPropagation(); innerToggle('ciktilar')" style="border-radius:14px;background:#f9fafb;">
-              <div class="acc-title">
-                <h3 style="font-size:13px;letter-spacing:1.5px;color:#6b7280;">ÇIKTILAR</h3>
-              </div>
-              <div class="acc-chevron">▼</div>
-            </div>
-            <div class="inner-acc-body">
-              <div style="border-top:1px solid var(--border);">
-
-                <!-- TÜM ÇIKTILAR: TEK GRID -->
-                <div style="display:grid;grid-template-columns:auto 1fr 1fr;">
-
-                  <!-- Başlık satırı -->
-                  <div style="display:contents;">
-                    <div style="padding:12px 20px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);"></div>
-                    <div style="padding:12px 20px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);text-align:center;font-size:11px;font-weight:600;letter-spacing:1px;color:#6b7280;text-transform:uppercase;">Kamu</div>
-                    <div style="padding:12px 20px;border-bottom:1px solid var(--border);text-align:center;font-size:11px;font-weight:600;letter-spacing:1px;color:#6b7280;text-transform:uppercase;">Elden Satış</div>
+                  <!-- SOL SABİT ETİKET SÜTUNU -->
+                  <div class="girdi-etiket-col">
+                    <div class="girdi-etiket-cell baslik"></div>
+                    <div class="girdi-etiket-cell referans">Ürün Adı</div>
+                    <div class="girdi-etiket-cell referans geri-odemeli-only">Referans Uygulama</div>
+                    <div class="girdi-etiket-cell">PSF<span style="display:block;font-size:9px;font-weight:400;text-transform:none;letter-spacing:0;margin-top:2px;margin-left:3px;">(KDV Dahil)</span></div>
+                    <div class="girdi-etiket-cell">PSF<span style="display:block;font-size:9px;font-weight:400;text-transform:none;letter-spacing:0;margin-top:2px;margin-left:3px;">(KDV Hariç)</span></div>
+                    <div class="girdi-etiket-cell">DSF<span style="display:block;font-size:9px;font-weight:400;text-transform:none;letter-spacing:0;margin-top:2px;margin-left:3px;">(KDV Hariç)</span></div>
+                    <div class="girdi-etiket-cell separator geri-odemeli-only">— Kamu Fiyatları —</div>
+                    <div class="girdi-etiket-cell geri-odemeli-only">Kamu PSF<span style="display:block;font-size:9px;font-weight:400;text-transform:none;letter-spacing:0;margin-top:2px;margin-left:3px;">(KDV Dahil)</span></div>
+                    <div class="girdi-etiket-cell geri-odemeli-only">Kamu PSF<span style="display:block;font-size:9px;font-weight:400;text-transform:none;letter-spacing:0;margin-top:2px;margin-left:3px;">(KDV Hariç)</span></div>
+                    <div class="girdi-etiket-cell geri-odemeli-only">Kamu DSF<span style="display:block;font-size:9px;font-weight:400;text-transform:none;letter-spacing:0;margin-top:2px;margin-left:3px;">(KDV Hariç)</span></div>
+                    <div class="girdi-etiket-cell separator">— Satış Bilgileri —</div>
+                    <div class="girdi-etiket-cell">Satış Adedi</div>
+                    <div class="girdi-etiket-cell">MF</div>
+                    <div class="girdi-etiket-cell">Satış Şartlı DSF</div>
+                    <div class="girdi-etiket-cell separator">— Finansal —</div>
+                    <div class="girdi-etiket-cell">Satış Vadesi<span style="display:block;font-size:9px;font-weight:400;text-transform:none;letter-spacing:0;margin-top:2px;margin-left:3px;">(gün)</span></div>
+                    <div class="girdi-etiket-cell">Ort. Yıllık Faiz<span style="display:block;font-size:9px;font-weight:400;text-transform:none;letter-spacing:0;margin-top:2px;margin-left:3px;">(%)</span></div>
+                    <div class="girdi-etiket-cell separator">— Süreler —</div>
+                    <div class="girdi-etiket-cell">Günlük Satış Adedi</div>
+                    <div class="girdi-etiket-cell">Tüketim Süresi</div>
+                    <div class="girdi-etiket-cell">Fatura Satış Süresi</div>
+                    <div class="girdi-etiket-cell geri-odemeli-only last-go">Geri Ödeme Süresi<span style="display:block;font-size:9px;font-weight:400;text-transform:none;letter-spacing:0;margin-top:2px;margin-left:3px;">(gün)</span></div>
+                    <div class="girdi-etiket-cell last geri-odemsiz-last" style="display:none;">Tüketim Süresi</div>
                   </div>
 
-                  <!-- Alış-Satış Kârı -->
-                  <div style="display:contents;">
-                    <div style="padding:16px 20px;display:flex;align-items:center;border-right:1px solid var(--border);border-bottom:1px dashed var(--border);">
-                      <span style="font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;">Toplam Alış-Satış Kârı</span>
+                  <!-- BENİM ÜRÜNÜM SÜTUNU -->
+                  <div class="girdi-urun-col" id="girdi-col-u0">
+                    <div class="girdi-input-cell baslik" style="flex-direction:row;align-items:center;justify-content:space-between;">
+                      <div class="urun-baslik-isim" id="baslik-girdi-u0">📦 Benim Ürünüm</div>
+                      <div onclick="ekleRakip()" id="btn-ekle-rakip-1" class="urun-ekle-btn">+ Rakip</div>
                     </div>
-                    <div style="padding:16px 20px;border-right:1px solid var(--border);border-bottom:1px dashed var(--border);">
-                      <input type="text" id="go-alis-satis-kar-kamu" readonly class="cikti-input" style="width:100%;">
+                    <div class="girdi-input-cell referans">
+                      <input type="text" id="u0-urun-adi" placeholder="" oninput="urunAdiGuncelle('u0', this.value)" style="width:100%;background:#fff;border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;height:42px;">
                     </div>
-                    <div style="padding:16px 20px;border-bottom:1px dashed var(--border);">
-                      <input type="text" id="go-alis-satis-kar-elden" readonly class="cikti-input" style="width:100%;">
+                    <div class="girdi-input-cell referans geri-odemeli-only">
+                      <select id="u0-urun-tipi" onchange="refUygulamaSecim(); hesaplaKamuDSF()">
+                        <option value="" disabled selected></option>
+                        <option value="fiyat_korumali">Fiyat Korumalı</option>
+                        <option value="esdegeri_olmayan">Eşdeğeri Olmayan</option>
+                        <option value="esdegerli_referans">Eşdeğeri Olan</option>
+                        <option value="enteral">Enteral Beslenme</option>
+                      </select>
                     </div>
+                    <div class="girdi-input-cell"><input type="number" id="u0-psf" placeholder="örn. 200.00" step="0.01" oninput="psfDenKDVsiz()"></div>
+                    <div class="girdi-input-cell"><input type="text" id="u0-psf-kdvsiz" placeholder="Otomatik" readonly></div>
+                    <div class="girdi-input-cell"><input type="text" id="u0-dsf" placeholder="Otomatik" readonly class="dsf-input-otomatik" oninput="dsfManuelP('u0')"></div>
+                    <div class="girdi-input-cell separator geri-odemeli-only"></div>
+                    <div class="girdi-input-cell geri-odemeli-only"><input type="text" id="u0-kamu-psf" placeholder="Otomatik" readonly></div>
+                    <div class="girdi-input-cell geri-odemeli-only"><input type="text" id="u0-kamu-psf-kdvsiz" placeholder="Otomatik" readonly></div>
+                    <div class="girdi-input-cell geri-odemeli-only"><input type="text" id="u0-kamu-dsf" placeholder="Otomatik" readonly></div>
+                    <div class="girdi-input-cell separator"></div>
+                    <div class="girdi-input-cell"><input type="number" id="u0-satis-adet" placeholder="örn. 100" step="1" oninput="hesaplaOTS(); hesaplaFISS(); hesaplaSatisSartliDSF();"></div>
+                    <div class="girdi-input-cell"><input type="text" id="u0-mf" placeholder="örn. 10" oninput="hesaplaOTS(); hesaplaSatisSartliDSF();"></div>
+                    <div class="girdi-input-cell"><input type="text" id="u0-satis-sartli-dsf" placeholder="Otomatik" readonly></div>
+                    <div class="girdi-input-cell separator"></div>
+                    <div class="girdi-input-cell"><input type="number" id="u0-vade" placeholder="örn. 90" step="1" oninput="hesaplaCiktilar();"></div>
+                    <div class="girdi-input-cell"><input type="number" id="u0-faiz" placeholder="örn. 45" step="0.01" oninput="hesaplaCiktilar();"></div>
+                    <div class="girdi-input-cell separator"></div>
+                    <div class="girdi-input-cell"><input type="number" id="u0-gunluk-satis" placeholder="örn. 5" step="1" oninput="hesaplaOTS(); hesaplaFISS(); hesaplaCiktilar();"></div>
+                    <div class="girdi-input-cell"><input type="number" id="u0-tuketim-sure" readonly placeholder="gün"></div>
+                    <div class="girdi-input-cell"><input type="number" id="u0-fatura-sure" readonly placeholder="gün"></div>
+                    <div class="girdi-input-cell geri-odemeli-only last-go">
+                      <input type="text" inputmode="numeric" pattern="[0-9]*" id="u0-geri-odeme-sure-select" placeholder="gün" list="geri-odeme-liste" oninput="hesaplaCiktilar();">
+                      <datalist id="geri-odeme-liste">
+                        <option value="45"><option value="60"><option value="75">
+                        <option value="90"><option value="105"><option value="120">
+                      </datalist>
+                    </div>
+                    <div class="girdi-input-cell last geri-odemsiz-last" style="display:none;"></div>
                   </div>
-
-                  <!-- MF Kârı - tek kutu, 2 kolon kaplıyor -->
-                  <div style="display:contents;">
-                    <div style="padding:16px 20px;display:flex;align-items:center;border-right:1px solid var(--border);border-bottom:2px solid var(--border);">
-                      <span style="font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;">Toplam MF Kârı</span>
-                    </div>
-                    <div style="padding:16px 20px;grid-column:span 2;border-bottom:2px solid var(--border);">
-                      <input type="text" id="go-mf-kar-kamu" readonly class="cikti-input" style="width:100%;">
-                    </div>
-                  </div>
-
-                  <!-- Tüketim Süresine Göre Valör Kârı - tek kutu -->
-                  <div style="display:contents;">
-                    <div style="padding:16px 20px;display:flex;align-items:center;border-right:1px solid var(--border);border-bottom:1px dashed var(--border);">
-                      <span style="font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;">Tüketim Süresine Göre<br><strong>Valör Kârı</strong></span>
-                    </div>
-                    <div style="padding:16px 20px;grid-column:span 2;border-bottom:1px dashed var(--border);">
-                      <input type="text" id="go-valor-tuketim-kamu" readonly class="cikti-input" style="width:100%;">
-                    </div>
-                  </div>
-
-                  <!-- Fatura İçin Satış Süresine Göre Valör Kârı - tek kutu -->
-                  <div style="display:contents;">
-                    <div style="padding:16px 20px;display:flex;align-items:center;border-right:1px solid var(--border);border-bottom:2px solid var(--border);">
-                      <span style="font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;">Fatura İçin Satış Süresine Göre<br><strong>Valör Kârı</strong></span>
-                    </div>
-                    <div style="padding:16px 20px;grid-column:span 2;border-bottom:2px solid var(--border);">
-                      <input type="text" id="go-valor-geriodeme-kamu" readonly class="cikti-input" style="width:100%;">
-                    </div>
-                  </div>
-
-                  <!-- Tüketim Süresine Göre Toplam Kâr -->
-                  <div style="display:contents;">
-                    <div style="padding:16px 20px;display:flex;align-items:center;border-right:1px solid var(--border);border-bottom:1px dashed var(--border);">
-                      <span style="font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;">Tüketim Süresine Göre<br><strong>Toplam Kâr</strong></span>
-                    </div>
-                    <div style="padding:16px 20px;border-right:1px solid var(--border);border-bottom:1px dashed var(--border);">
-                      <input type="text" id="go-toplam-kar-tuketim-kamu" readonly class="cikti-input" style="width:100%;">
-                    </div>
-                    <div style="padding:16px 20px;border-bottom:1px dashed var(--border);">
-                      <input type="text" id="go-toplam-kar-tuketim-elden" readonly class="cikti-input" style="width:100%;">
-                    </div>
-                  </div>
-
-                  <!-- Fatura İçin Satış Süresine Göre Toplam Kâr -->
-                  <div style="display:contents;">
-                    <div style="padding:16px 20px;display:flex;align-items:center;border-right:1px solid var(--border);">
-                      <span style="font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;">Fatura İçin Satış Süresine Göre<br><strong>Toplam Kâr</strong></span>
-                    </div>
-                    <div style="padding:16px 20px;border-right:1px solid var(--border);">
-                      <input type="text" id="go-toplam-kar-geriodeme-kamu" readonly class="cikti-input" style="width:100%;">
-                    </div>
-                    <div style="padding:16px 20px;">
-                      <input type="text" id="go-toplam-kar-geriodeme-elden" readonly class="cikti-input" style="width:100%;">
-                    </div>
-                  </div>
+                  <!-- Rakip girdi sütunlar JS ile buraya eklenir -->
 
                 </div>
               </div>
             </div>
           </div>
 
-        </div>
-      </div>
+          <!-- ÇIKTILAR -->
+          <div class="inner-acc-item" id="acc-ciktilar">
+            <div class="inner-acc-header" onclick="event.stopPropagation(); innerToggle('ciktilar')">
+              <div class="acc-title">
+                <h3 style="font-size:13px;letter-spacing:1.5px;color:#6b7280;">ÇIKTILAR</h3>
+              </div>
+              <div class="acc-chevron">▼</div>
+            </div>
+            <div class="inner-acc-body">
+              <div class="tablo-scroll-wrap">
+                <div class="cikti-tablo" id="cikti-tablo">
+
+                  <!-- SOL SABİT ETİKET SÜTUNU -->
+                  <div class="cikti-etiket-col">
+                    <div class="cikti-etiket-cell baslik cikti-row-baslik"></div>
+                    <div class="cikti-etiket-cell cikti-row-alis">Toplam Alış-Satış Kârı</div>
+                    <div class="cikti-etiket-cell thick cikti-row-mf">Toplam MF Kârı</div>
+                    <div class="cikti-etiket-cell cikti-row-valor-t"><div>Tüketim Süresine Göre<br><strong>Valör Kârı</strong></div></div>
+                    <div class="cikti-etiket-cell thick cikti-row-valor-f"><div>Fatura Süresine Göre<br><strong>Valör Kârı</strong></div></div>
+                    <div class="cikti-etiket-cell cikti-row-toplam-t"><div>Tüketim Süresine Göre<br><strong>Toplam Kâr</strong></div></div>
+                    <div class="cikti-etiket-cell last cikti-row-toplam-f"><div>Fatura Süresine Göre<br><strong>Toplam Kâr</strong></div></div>
+                  </div>
+
+                  <!-- BENİM ÜRÜNÜM ÇIKTI SÜTUNU -->
+                  <div class="cikti-urun-col" id="cikti-col-u0">
+                    <div class="cikti-urun-baslik cikti-row-baslik">
+                      <div class="cikti-urun-baslik-isim" id="baslik-cikti-u0">📦 Benim Ürünüm</div>
+                      <div class="cikti-kamu-elden-baslik">
+                        <div>Kamu</div><div>Elden Satış</div>
+                      </div>
+                    </div>
+                    <div class="cikti-deger-cell cikti-row-alis">
+                      <div class="cikti-kamu-wrap">
+                        <input type="text" id="u0-alis-satis-kar-kamu" readonly class="cikti-input">
+                        <input type="text" id="u0-alis-satis-kar-kamu-pct" readonly class="cikti-pct" placeholder="Kâr/Maliyet">
+                      </div>
+                      <div class="cikti-elden-wrap">
+                        <input type="text" id="u0-alis-satis-kar-elden" readonly class="cikti-input">
+                        <input type="text" id="u0-alis-satis-kar-elden-pct" readonly class="cikti-pct" placeholder="Kâr/Maliyet">
+                      </div>
+                    </div>
+                    <div class="cikti-deger-cell span2 thick cikti-row-mf">
+                      <div class="cikti-kamu-wrap">
+                        <input type="text" id="u0-mf-kar-kamu" readonly class="cikti-input">
+                        <input type="text" id="u0-mf-kar-kamu-pct" readonly class="cikti-pct" placeholder="Kâr/Maliyet">
+                      </div>
+                    </div>
+                    <div class="cikti-deger-cell span2 cikti-row-valor-t">
+                      <div class="cikti-kamu-wrap">
+                        <input type="text" id="u0-valor-tuketim-kamu" readonly class="cikti-input">
+                        <input type="text" id="u0-valor-tuketim-kamu-pct" readonly class="cikti-pct" placeholder="Kâr/Maliyet">
+                      </div>
+                    </div>
+                    <div class="cikti-deger-cell span2 thick cikti-row-valor-f">
+                      <div class="cikti-kamu-wrap">
+                        <input type="text" id="u0-valor-geriodeme-kamu" readonly class="cikti-input">
+                        <input type="text" id="u0-valor-geriodeme-kamu-pct" readonly class="cikti-pct" placeholder="Kâr/Maliyet">
+                      </div>
+                    </div>
+                    <div class="cikti-deger-cell cikti-row-toplam-t">
+                      <div class="cikti-kamu-wrap">
+                        <input type="text" id="u0-toplam-kar-tuketim-kamu" readonly class="cikti-input">
+                        <input type="text" id="u0-toplam-kar-tuketim-kamu-pct" readonly class="cikti-pct" placeholder="Kâr/Maliyet">
+                      </div>
+                      <div class="cikti-elden-wrap">
+                        <input type="text" id="u0-toplam-kar-tuketim-elden" readonly class="cikti-input">
+                        <input type="text" id="u0-toplam-kar-tuketim-elden-pct" readonly class="cikti-pct" placeholder="Kâr/Maliyet">
+                      </div>
+                    </div>
+                    <div class="cikti-deger-cell last cikti-row-toplam-f">
+                      <div class="cikti-kamu-wrap">
+                        <input type="text" id="u0-toplam-kar-geriodeme-kamu" readonly class="cikti-input">
+                        <input type="text" id="u0-toplam-kar-geriodeme-kamu-pct" readonly class="cikti-pct" placeholder="Kâr/Maliyet">
+                      </div>
+                      <div class="cikti-elden-wrap">
+                        <input type="text" id="u0-toplam-kar-geriodeme-elden" readonly class="cikti-input">
+                        <input type="text" id="u0-toplam-kar-geriodeme-elden-pct" readonly class="cikti-pct" placeholder="Kâr/Maliyet">
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Rakip çıktı sütunlar JS ile buraya eklenir -->
+
+                </div>
+              </div>
+            </div>
+          </div>
+
     </div>
-
-
-  </div><!-- /accordion -->
+  </div>
 </div>
 
 <script>
-// ── ACCORDION ─────────────────────────────────────────────────────────────
-function toggle(id) {
-  document.getElementById('acc-' + id).classList.toggle('open');
-}
+function toggle(id) { document.getElementById('acc-' + id).classList.toggle('open'); }
+function innerToggle(id) { document.getElementById('acc-' + id).classList.toggle('open'); }
 
-function innerToggle(id) {
-  document.getElementById('acc-' + id).classList.toggle('open');
-}
-
-// ── FORMAT ────────────────────────────────────────────────────────────────
 function fmt(n) {
-  return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n) + ' \u20ba';
+  return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n) + ' ₺';
 }
-function fmtP(n) {
-  return (n >= 0 ? '+' : '') + n.toFixed(2) + '%';
+function v(id) {
+  const el = document.getElementById(id);
+  if (!el) return 0;
+  return parseFloat(el.value.replace('₺ ', '').replace('₺', '').replace(/\./g, '').replace(',', '.')) || 0;
 }
-function v(id) { return parseFloat(document.getElementById(id).value) || 0; }
 function vi(id) { return parseInt(document.getElementById(id).value) || 0; }
 
-function card(label, value, sub, cls) {
-  return `<div class="result-card">
-    <div class="rc-label">${label}</div>
-    <div class="rc-value ${cls||''}">${value}</div>
-    ${sub ? `<div class="rc-sub">${sub}</div>` : ''}
-  </div>`;
-}
-
-// ── KKİ LOOKUP TABLOSU (20/12/2025 itibarıyla geçerli) ────────────────────
-const KKI_TABLO = {
-  fiyat_korumali: [
-    { maxDSF: 45.63,   oran: 0,  aciklama: 'DSF 45,63 \u20ba ve alt\u0131 \u2014 KK\u0130 uygulanmaz' },
-    { maxDSF: 87.34,   oran: 0,  aciklama: 'Fiyat korumal\u0131 \u2014 45,64\u201387,34 \u20ba aras\u0131: %0' },
-    { maxDSF: 131.60,  oran: 10, aciklama: 'Fiyat korumal\u0131 \u2014 87,35\u2013131,60 \u20ba aras\u0131: %10' },
-    { maxDSF: Infinity, oran: 28, aciklama: 'Fiyat korumal\u0131 \u2014 131,61 \u20ba ve \u00fczeri: referans\u0131 var/maliyet kart\u0131 var ise %28, referans\u0131 yok ise %40' },
-  ],
-  esdegersiz_referans: [
-    { maxDSF: 45.63,   oran: 0,  aciklama: 'DSF 45,63 \u20ba ve alt\u0131 \u2014 KK\u0130 uygulanmaz' },
-    { maxDSF: 87.34,   oran: 10, aciklama: 'E\u015fde\u011fersiz referans \u2014 45,64\u201387,34 \u20ba: %10' },
-    { maxDSF: 131.60,  oran: 31, aciklama: 'E\u015fde\u011fersiz referans \u2014 87,35\u2013131,60 \u20ba: %31' },
-    { maxDSF: Infinity, oran: 41, aciklama: 'E\u015fde\u011fersiz referans \u2014 131,61 \u20ba ve \u00fczeri: %41' },
-  ],
-  esdegerli_referans: [
-    { maxDSF: 45.63,   oran: 0,  aciklama: 'DSF 45,63 \u20ba ve alt\u0131 \u2014 KK\u0130 uygulanmaz' },
-    { maxDSF: 87.34,   oran: 10, aciklama: 'E\u015fde\u011fer/e\u015fde\u011ferli referans \u2014 45,64\u201387,34 \u20ba: %10' },
-    { maxDSF: 131.60,  oran: 18, aciklama: 'E\u015fde\u011fer/e\u015fde\u011ferli referans \u2014 87,35\u2013131,60 \u20ba: %18' },
-    { maxDSF: Infinity, oran: 28, aciklama: 'E\u015fde\u011fer/e\u015fde\u011ferli referans \u2014 131,61 \u20ba ve \u00fczeri: %28' },
-  ],
-  enteral: [
-    { maxDSF: 45.63,   oran: 0,  aciklama: 'DSF 45,63 \u20ba ve alt\u0131 \u2014 KK\u0130 uygulanmaz' },
-    { maxDSF: 87.34,   oran: 11, aciklama: 'Enteral beslenme \u2014 45,64\u201387,34 \u20ba: %11' },
-    { maxDSF: 131.60,  oran: 31, aciklama: 'Enteral beslenme \u2014 87,35\u2013131,60 \u20ba: %31' },
-    { maxDSF: Infinity, oran: 41, aciklama: 'Enteral beslenme \u2014 131,61 \u20ba ve \u00fczeri: %41' },
-  ],
-  kan_mama: [
-    { maxDSF: 45.63,   oran: 0,  aciklama: 'DSF 45,63 \u20ba ve alt\u0131 \u2014 KK\u0130 uygulanmaz' },
-    { maxDSF: Infinity, oran: 11, aciklama: 'Kan \u00fcr\u00fcn\u00fc/t\u0131bbi mama/radyofarmas\u00f6tik \u2014 45,64 \u20ba ve \u00fczeri: %11 baz iskonto' },
-  ],
-};
-
-// ── PSF KDV & DSF HESAPLAMA ───────────────────────────────────────────────
-function tl(val) {
-  return val !== '' && val !== null && !isNaN(val) ? '₺' + parseFloat(val).toFixed(2) : '';
+function setPCT(id, kar, maliyet) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (kar !== '' && maliyet) {
+    const pct = (parseFloat(kar) / maliyet) * 100;
+    el.value = '%' + pct.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    el.style.color = pct < 0 ? '#e63946' : '#6366f1';
+    el.style.borderColor = pct < 0 ? '#e63946' : '#6366f1';
+    el.style.background = pct < 0 ? '#fff5f5' : '#f0f4ff';
+  } else { el.value = ''; }
 }
 
 function setTL(id, val) {
@@ -726,23 +518,16 @@ function setTL(id, val) {
   if (!el) return;
   if (val !== '' && val !== null && !isNaN(val)) {
     const num = parseFloat(val);
-    const formatted = num.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    el.value = '₺ ' + formatted;
+    el.value = '₺ ' + num.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const isValor = id.includes('valor') || id.includes('toplam-kar');
     if (isValor && num < 0) {
-      el.style.color = '#e63946';
-      el.style.borderColor = '#e63946';
-      el.style.background = '#fff5f5';
+      el.style.color = '#e63946'; el.style.borderColor = '#e63946'; el.style.background = '#fff5f5';
     } else {
-      el.style.color = '#00a672';
-      el.style.borderColor = '#00a672';
-      el.style.background = '#f0fdf8';
+      el.style.color = '#007d0c'; el.style.borderColor = '#007d0c'; el.style.background = '#f0fdf8';
     }
   } else {
     el.value = '';
-    el.style.color = '#00a672';
-    el.style.borderColor = '#00a672';
-    el.style.background = '#f0fdf8';
+    el.style.color = '#007d0c'; el.style.borderColor = '#007d0c'; el.style.background = '#f0fdf8';
   }
 }
 
@@ -751,267 +536,411 @@ function parseTL(id) {
   if (!el) return 0;
   return parseFloat(el.value.replace('₺ ', '').replace('₺', '').replace(/\./g, '').replace(',', '.')) || 0;
 }
+function clearEl(id) { const el = document.getElementById(id); if (el) el.value = ''; }
 
-function psfDenKDVsiz() {
-  const psf = parseFloat(document.getElementById('go-psf').value) || 0;
-  const kdvsizEl = document.getElementById('go-psf-kdvsiz');
+// ── RAKİP EKLE / KALDIR ──────────────────────────────────────────────────
+let rakipSayisi = 0;
+
+function ekleRakip() {
+  if (rakipSayisi >= 2) return;
+  rakipSayisi++;
+  const p = 'u' + rakipSayisi;
+  const isim = rakipSayisi === 1 ? 'Rakip Ürün 1' : 'Rakip Ürün 2';
+  const renk = rakipSayisi === 1 ? 'rakip-1' : 'rakip-2';
+
+  if (rakipSayisi === 1) {
+    const b = document.getElementById('btn-ekle-rakip-1');
+    if (b) b.style.display = 'none';
+  }
+  if (rakipSayisi === 2) {
+    const bwrap = document.getElementById('btn-wrap-u1');
+    if (bwrap) bwrap.style.display = 'none';
+  }
+
+  const girdiTablo = document.getElementById('girdi-tablo');
+  const col = document.createElement('div');
+  col.className = 'girdi-urun-col ' + renk;
+  col.id = 'girdi-col-' + p;
+  col.innerHTML = girdiSutunHTML(p, isim, renk);
+  girdiTablo.appendChild(col);
+
+  const ciktiTablo = document.getElementById('cikti-tablo');
+  const ciktiCol = document.createElement('div');
+  ciktiCol.className = 'cikti-urun-col ' + renk;
+  ciktiCol.id = 'cikti-col-' + p;
+  ciktiCol.innerHTML = ciktiSutunHTML(p, isim, renk);
+  ciktiTablo.appendChild(ciktiCol);
+}
+
+function kaldirRakip(p) {
+  const num = parseInt(p.replace('u', ''));
+  ['girdi-col-', 'cikti-col-'].forEach(pre => {
+    const el = document.getElementById(pre + p); if (el) el.remove();
+  });
+  if (num === 1) {
+    ['girdi-col-u2', 'cikti-col-u2'].forEach(id => { const el = document.getElementById(id); if (el) el.remove(); });
+    rakipSayisi = 0;
+  } else {
+    rakipSayisi = 1;
+  }
+  const b1 = document.getElementById('btn-ekle-rakip-1');
+  if (b1) b1.style.display = '';
+}
+
+function girdiSutunHTML(p, isim, renk) {
+  const ekleBtn = rakipSayisi === 1
+    ? `<div onclick="ekleRakip()" id="btn-ekle-rakip-2" class="urun-ekle-btn">+ Rakip</div>` : '';
+  const defaultIsim = p === 'u1' ? 'Rakip Ürün 1' : 'Rakip Ürün 2';
+  return `
+    <div class="girdi-input-cell baslik ${renk}" style="flex-direction:row;align-items:center;justify-content:space-between;">
+      <div class="urun-baslik-isim ${renk}" id="baslik-girdi-${p}">🏷️ ${isim}</div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <div id="btn-wrap-${p}">${ekleBtn}</div>
+        <div onclick="kaldirRakip('${p}')" class="urun-kapat-btn">✕</div>
+      </div>
+    </div>
+    <div class="girdi-input-cell referans">
+      <input type="text" id="${p}-urun-adi" placeholder="" oninput="urunAdiGuncelle('${p}', this.value)" style="width:100%;background:#fff;border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;height:42px;">
+    </div>
+    <div class="girdi-input-cell referans geri-odemeli-only">
+      <select id="${p}-urun-tipi" onchange="refUygulamaSecimP('${p}'); hesaplaKamuDSFP('${p}')">
+        <option value="" disabled selected></option>
+        <option value="fiyat_korumali">Fiyat Korumalı</option>
+        <option value="esdegeri_olmayan">Eşdeğeri Olmayan</option>
+        <option value="esdegerli_referans">Eşdeğeri Olan</option>
+        <option value="enteral">Enteral Beslenme</option>
+      </select>
+    </div>
+    <div class="girdi-input-cell"><input type="number" id="${p}-psf" placeholder="örn. 200.00" step="0.01" oninput="psfDenKDVsizP('${p}')"></div>
+    <div class="girdi-input-cell"><input type="text" id="${p}-psf-kdvsiz" placeholder="Otomatik" readonly></div>
+    <div class="girdi-input-cell"><input type="text" id="${p}-dsf" placeholder="Otomatik" readonly class="dsf-input-otomatik" oninput="dsfManuelP('${p}')"></div>
+    <div class="girdi-input-cell separator geri-odemeli-only"></div>
+    <div class="girdi-input-cell geri-odemeli-only"><input type="text" id="${p}-kamu-psf" placeholder="Otomatik" readonly></div>
+    <div class="girdi-input-cell geri-odemeli-only"><input type="text" id="${p}-kamu-psf-kdvsiz" placeholder="Otomatik" readonly></div>
+    <div class="girdi-input-cell geri-odemeli-only"><input type="text" id="${p}-kamu-dsf" placeholder="Otomatik" readonly></div>
+    <div class="girdi-input-cell separator"></div>
+    <div class="girdi-input-cell"><input type="number" id="${p}-satis-adet" placeholder="örn. 100" step="1" oninput="hesaplaOTSP('${p}'); hesaplaFISSP('${p}'); hesaplaSatisSartliDSFP('${p}');"></div>
+    <div class="girdi-input-cell"><input type="text" id="${p}-mf" placeholder="örn. 10" oninput="hesaplaOTSP('${p}'); hesaplaSatisSartliDSFP('${p}');"></div>
+    <div class="girdi-input-cell"><input type="text" id="${p}-satis-sartli-dsf" placeholder="Otomatik" readonly></div>
+    <div class="girdi-input-cell separator"></div>
+    <div class="girdi-input-cell"><input type="number" id="${p}-vade" placeholder="örn. 90" step="1" oninput="hesaplaCiktilarP('${p}');"></div>
+    <div class="girdi-input-cell"><input type="number" id="${p}-faiz" placeholder="örn. 45" step="0.01" oninput="hesaplaCiktilarP('${p}');"></div>
+    <div class="girdi-input-cell separator"></div>
+    <div class="girdi-input-cell"><input type="number" id="${p}-gunluk-satis" placeholder="örn. 5" step="1" oninput="hesaplaOTSP('${p}'); hesaplaFISSP('${p}'); hesaplaCiktilarP('${p}');"></div>
+    <div class="girdi-input-cell"><input type="number" id="${p}-tuketim-sure" readonly placeholder="gün"></div>
+    <div class="girdi-input-cell"><input type="number" id="${p}-fatura-sure" readonly placeholder="gün"></div>
+    <div class="girdi-input-cell geri-odemeli-only last-go"><input type="text" inputmode="numeric" id="${p}-geri-odeme-sure-select" placeholder="gün" list="geri-odeme-liste" oninput="hesaplaCiktilarP('${p}');"></div>
+    <div class="girdi-input-cell last geri-odemsiz-last" style="display:none;"></div>
+  `;
+}
+
+function ciktiSutunHTML(p, isim, renk) {
+  return `
+    <div class="cikti-urun-baslik ${renk} cikti-row-baslik">
+      <div class="cikti-urun-baslik-isim ${renk}" id="baslik-cikti-${p}">🏷️ ${isim}</div>
+      <div class="cikti-kamu-elden-baslik"><div>Kamu</div><div>Elden Satış</div></div>
+    </div>
+    <div class="cikti-deger-cell cikti-row-alis">
+      <div class="cikti-kamu-wrap">
+        <input type="text" id="${p}-alis-satis-kar-kamu" readonly class="cikti-input">
+        <input type="text" id="${p}-alis-satis-kar-kamu-pct" readonly class="cikti-pct" placeholder="Kâr/Maliyet">
+      </div>
+      <div class="cikti-elden-wrap">
+        <input type="text" id="${p}-alis-satis-kar-elden" readonly class="cikti-input">
+        <input type="text" id="${p}-alis-satis-kar-elden-pct" readonly class="cikti-pct" placeholder="Kâr/Maliyet">
+      </div>
+    </div>
+    <div class="cikti-deger-cell span2 thick cikti-row-mf">
+      <div class="cikti-kamu-wrap">
+        <input type="text" id="${p}-mf-kar-kamu" readonly class="cikti-input">
+        <input type="text" id="${p}-mf-kar-kamu-pct" readonly class="cikti-pct" placeholder="Kâr/Maliyet">
+      </div>
+    </div>
+    <div class="cikti-deger-cell span2 cikti-row-valor-t">
+      <div class="cikti-kamu-wrap">
+        <input type="text" id="${p}-valor-tuketim-kamu" readonly class="cikti-input">
+        <input type="text" id="${p}-valor-tuketim-kamu-pct" readonly class="cikti-pct" placeholder="Kâr/Maliyet">
+      </div>
+    </div>
+    <div class="cikti-deger-cell span2 thick cikti-row-valor-f">
+      <div class="cikti-kamu-wrap">
+        <input type="text" id="${p}-valor-geriodeme-kamu" readonly class="cikti-input">
+        <input type="text" id="${p}-valor-geriodeme-kamu-pct" readonly class="cikti-pct" placeholder="Kâr/Maliyet">
+      </div>
+    </div>
+    <div class="cikti-deger-cell cikti-row-toplam-t">
+      <div class="cikti-kamu-wrap">
+        <input type="text" id="${p}-toplam-kar-tuketim-kamu" readonly class="cikti-input">
+        <input type="text" id="${p}-toplam-kar-tuketim-kamu-pct" readonly class="cikti-pct" placeholder="Kâr/Maliyet">
+      </div>
+      <div class="cikti-elden-wrap">
+        <input type="text" id="${p}-toplam-kar-tuketim-elden" readonly class="cikti-input">
+        <input type="text" id="${p}-toplam-kar-tuketim-elden-pct" readonly class="cikti-pct" placeholder="Kâr/Maliyet">
+      </div>
+    </div>
+    <div class="cikti-deger-cell last cikti-row-toplam-f">
+      <div class="cikti-kamu-wrap">
+        <input type="text" id="${p}-toplam-kar-geriodeme-kamu" readonly class="cikti-input">
+        <input type="text" id="${p}-toplam-kar-geriodeme-kamu-pct" readonly class="cikti-pct" placeholder="Kâr/Maliyet">
+      </div>
+      <div class="cikti-elden-wrap">
+        <input type="text" id="${p}-toplam-kar-geriodeme-elden" readonly class="cikti-input">
+        <input type="text" id="${p}-toplam-kar-geriodeme-elden-pct" readonly class="cikti-pct" placeholder="Kâr/Maliyet">
+      </div>
+    </div>
+  `;
+}
+
+// ── PREFIX'Lİ HESAPLAMA FONKSİYONLARI ────────────────────────────────────
+
+function psfDenKDVsizP(p) {
+  const psf = parseFloat(document.getElementById(p+'-psf').value) || 0;
   if (psf) {
     const kdvsiz = psf / 1.10;
-    setTL('go-psf-kdvsiz', kdvsiz);
-    hesaplaDSF(kdvsiz);
+    setTL(p+'-psf-kdvsiz', kdvsiz);
+    if (!modGeriOdemsiz) hesaplaDSFP(p, kdvsiz);
   } else {
-    kdvsizEl.value = '';
-    document.getElementById('go-dsf').value = '';
-    document.getElementById('go-kamu-psf').value = '';
-    document.getElementById('go-kamu-psf-kdvsiz').value = '';
-    document.getElementById('go-kamu-dsf').value = '';
+    [p+'-psf-kdvsiz',p+'-dsf',p+'-kamu-psf',p+'-kamu-psf-kdvsiz',p+'-kamu-dsf'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.value = '';
+    });
   }
 }
 
-function hesaplaDSF(kdvsiz) {
-  const K1 = 383.43;
-  const K2 = 768.03;
-  let dsf = 0;
-  if (kdvsiz <= K1) {
-    dsf = kdvsiz / 1.28;
-  } else if (kdvsiz <= K2) {
-    dsf = (K1 / 1.28) + ((kdvsiz - K1) / 1.18);
-  } else {
-    dsf = (K1 / 1.28) + ((K2 - K1) / 1.18) + ((kdvsiz - K2) / 1.13);
-  }
-  setTL('go-dsf', dsf);
-  hesaplaKamuDSF(dsf);
+function hesaplaDSFP(p, kdvsiz) {
+  const K1 = 383.43, K2 = 768.03;
+  let dsf = kdvsiz <= K1 ? kdvsiz / 1.28
+    : kdvsiz <= K2 ? (K1/1.28) + ((kdvsiz-K1)/1.18)
+    : (K1/1.28) + ((K2-K1)/1.18) + ((kdvsiz-K2)/1.13);
+  setTL(p+'-dsf', dsf);
+  hesaplaKamuDSFP(p, dsf);
 }
 
-function refUygulamaSecim() {
-  const tip = document.getElementById('go-urun-tipi').value;
-  const satir = document.getElementById('go-referans-tipi-satir');
-  if (tip === 'fiyat_korumali') {
-    satir.style.display = 'grid';
-  } else {
-    satir.style.display = 'none';
-    document.getElementById('go-referans-tipi').value = '';
-  }
+function refUygulamaSecimP(p) {
+  const tip = document.getElementById(p+'-urun-tipi').value;
+  const satir = document.getElementById(p+'-referans-tipi-satir');
+  if (satir) satir.style.display = tip === 'fiyat_korumali' ? 'block' : 'none';
+  if (tip !== 'fiyat_korumali') { const el = document.getElementById(p+'-referans-tipi'); if (el) el.value = ''; }
 }
 
-function hesaplaKamuDSF(dsfParam) {
-  const dsf = dsfParam || parseTL('go-dsf');
-  const tip = document.getElementById('go-urun-tipi').value;
-  const refTip = document.getElementById('go-referans-tipi').value;
-
+function hesaplaKamuDSFP(p, dsfParam) {
+  const dsf = dsfParam || parseTL(p+'-dsf');
+  const tip = document.getElementById(p+'-urun-tipi').value;
+  const refTipEl = document.getElementById(p+'-referans-tipi');
+  const refTip = refTipEl ? refTipEl.value : '';
   if (!dsf || !tip) return;
-
   let oran = 0;
-
-  if (dsf <= 45.63) {
-    oran = 0;
-  } else if (tip === 'fiyat_korumali') {
-    if (dsf <= 87.34)       oran = 0;
-    else if (dsf <= 131.60) oran = 10;
-    else                    oran = (refTip === 'yok') ? 40 : 28;
-  } else if (tip === 'esdegeri_olmayan') {
-    if (dsf <= 87.34)       oran = 10;
-    else if (dsf <= 131.60) oran = 31;
-    else                    oran = 41;
-  } else if (tip === 'esdegerli_referans') {
-    if (dsf <= 87.34)       oran = 10;
-    else if (dsf <= 131.60) oran = 18;
-    else                    oran = 28;
-  } else if (tip === 'enteral') {
-    if (dsf <= 87.34)       oran = 11;
-    else if (dsf <= 131.60) oran = 31;
-    else                    oran = 41;
-  }
-
-  const kamuDsf = dsf * (1 - oran / 100);
-  setTL('go-kamu-dsf', kamuDsf);
-
-  // Kamu PSF (KDV hariç) - eczacı kar oranı DSF kademesine göre
-  let eczaciKar = 0;
-  if (kamuDsf <= 383.43)       eczaciKar = 0.28;
-  else if (kamuDsf <= 768.03)  eczaciKar = 0.18;
-  else                          eczaciKar = 0.13;
-
+  if (dsf <= 45.63) { oran = 0; }
+  else if (tip === 'fiyat_korumali') { oran = dsf<=87.34?0 : dsf<=131.60?10 : (refTip==='yok'?40:28); }
+  else if (tip === 'esdegeri_olmayan') { oran = dsf<=87.34?10 : dsf<=131.60?31 : 41; }
+  else if (tip === 'esdegerli_referans') { oran = dsf<=87.34?10 : dsf<=131.60?18 : 28; }
+  else if (tip === 'enteral') { oran = dsf<=87.34?11 : dsf<=131.60?31 : 41; }
+  const kamuDsf = dsf * (1 - oran/100);
+  setTL(p+'-kamu-dsf', kamuDsf);
+  const eczaciKar = kamuDsf<=383.43 ? 0.28 : kamuDsf<=768.03 ? 0.18 : 0.13;
   const kamuPsfKdvsiz = kamuDsf * (1 + eczaciKar);
-  setTL('go-kamu-psf-kdvsiz', kamuPsfKdvsiz);
-  setTL('go-kamu-psf', kamuPsfKdvsiz * 1.10);
-  hesaplaSatisSartliDSF();
+  setTL(p+'-kamu-psf-kdvsiz', kamuPsfKdvsiz);
+  setTL(p+'-kamu-psf', kamuPsfKdvsiz * 1.10);
+  hesaplaSatisSartliDSFP(p);
 }
 
-
-
-
-// ── GERİ ÖDEMELİ HESAPLAMA ───────────────────────────────────────────────
-
-
-function getGeriOdemeSure() {
-  const sel = document.getElementById('go-geri-odeme-sure-select');
-  if (sel.style.display === 'none') {
-    return parseFloat(document.getElementById('go-geri-odeme-sure-manuel').value) || 0;
-  }
-  return parseFloat(sel.value) || 0;
+function hesaplaSatisSartliDSFP(p) {
+  const satisAdet = parseFloat(document.getElementById(p+'-satis-adet').value) || 0;
+  const mf        = parseFloat(document.getElementById(p+'-mf').value) || 0;
+  const dsf       = modGeriOdemsiz ? (parseFloat(document.getElementById(p+'-dsf').value) || 0) : parseTL(p+'-kamu-dsf');
+  if (satisAdet && dsf) {
+    setTL(p+'-satis-sartli-dsf', (satisAdet * dsf) / (satisAdet + mf));
+  } else { const el = document.getElementById(p+'-satis-sartli-dsf'); if (el) el.value = ''; }
+  hesaplaCiktilarP(p);
 }
 
-function hesaplaSatisSartliDSF() {
-  const satisAdet = parseFloat(document.getElementById('go-satis-adet').value) || 0;
-  const kamuDsf   = parseTL('go-kamu-dsf');
-  const mfBed     = parseFloat(document.getElementById('go-mf').value) || 0;
-  if (satisAdet && kamuDsf) {
-    setTL('go-satis-sartli-dsf', (satisAdet * kamuDsf) / (satisAdet + mfBed));
-  } else {
-    document.getElementById('go-satis-sartli-dsf').value = '';
-  }
-  hesaplaCiktilar();
-}
-
-function hesaplaCiktilar() {
-  const kamuPsfKdvsiz  = parseTL('go-kamu-psf-kdvsiz');
-  const psfKdvsiz      = parseTL('go-psf-kdvsiz');
-  const kamuDsf        = parseTL('go-kamu-dsf');
-  const satisSartliDsf = parseTL('go-satis-sartli-dsf');
-  const mf             = parseFloat(document.getElementById('go-mf').value) || 0;
-
-  // Toplam Alış-Satış Kârı (Kamu)
-  const satisAdet2 = parseFloat(document.getElementById('go-satis-adet').value) || 0;
-  kamuPsfKdvsiz && kamuDsf ? setTL('go-alis-satis-kar-kamu', (kamuPsfKdvsiz - kamuDsf) * satisAdet2) : document.getElementById('go-alis-satis-kar-kamu').value = '';
-
-  // Toplam Alış-Satış Kârı (Elden Satış)
-  psfKdvsiz && kamuDsf ? setTL('go-alis-satis-kar-elden', (psfKdvsiz - kamuDsf) * satisAdet2) : document.getElementById('go-alis-satis-kar-elden').value = '';
-
-  // MF Kârı
-  mf && kamuDsf ? setTL('go-mf-kar-kamu', mf * kamuDsf) : document.getElementById('go-mf-kar-kamu').value = '';
-
-  // Valör Kârı
-  const satisAdet     = parseFloat(document.getElementById('go-satis-adet').value) || 0;
-  const vade          = parseFloat(document.getElementById('go-vade').value) || 0;
-  const faiz          = parseFloat(document.getElementById('go-faiz').value) || 0;
-  const tuketimSure   = parseFloat(document.getElementById('go-tuketim-sure').value) || 0;
-  const geriOdemeSure = parseFloat(document.getElementById('go-geri-odeme-sure-select').value) || 0;
-  const faturaSure    = parseFloat(document.getElementById('go-fatura-sure').value) || 0;
-
-  if (satisAdet && satisSartliDsf && faiz && vade && tuketimSure && geriOdemeSure) {
-    setTL('go-valor-tuketim-kamu', ((satisAdet + mf) * satisSartliDsf) * faiz * ((vade - tuketimSure) - geriOdemeSure) / 36500);
-  } else {
-    document.getElementById('go-valor-tuketim-kamu').value = '';
-  }
-
-  if (satisAdet && satisSartliDsf && faiz && vade && faturaSure && geriOdemeSure) {
-    setTL('go-valor-geriodeme-kamu', ((satisAdet + mf) * satisSartliDsf) * faiz * ((vade - faturaSure) - geriOdemeSure) / 36500);
-  } else {
-    document.getElementById('go-valor-geriodeme-kamu').value = '';
-  }
-
-  // Toplam Kâr
-  const alisSatisKamuVal  = parseTL('go-alis-satis-kar-kamu');
-  const alisSatisEldenVal = parseTL('go-alis-satis-kar-elden');
-  const mfKarVal          = parseTL('go-mf-kar-kamu');
-  const valorTuketimVal   = parseTL('go-valor-tuketim-kamu');
-  const valorFaturaVal    = parseTL('go-valor-geriodeme-kamu');
-
-  setTL('go-toplam-kar-tuketim-kamu',    alisSatisKamuVal  + mfKarVal + valorTuketimVal);
-  setTL('go-toplam-kar-tuketim-elden',   alisSatisEldenVal + mfKarVal + valorTuketimVal);
-  setTL('go-toplam-kar-geriodeme-kamu',  alisSatisKamuVal  + mfKarVal + valorFaturaVal);
-  setTL('go-toplam-kar-geriodeme-elden', alisSatisEldenVal + mfKarVal + valorFaturaVal);
-}
-
-
-function hesaplaFISS() {
-  const satisSartliDsf = parseTL('go-satis-sartli-dsf');
-  const satisAdet      = parseFloat(document.getElementById('go-satis-adet').value) || 0;
-  const mf             = parseFloat(document.getElementById('go-mf').value) || 0;
-  const gunlukSatis    = parseFloat(document.getElementById('go-gunluk-satis').value) || 0;
-  const kamuPsfKdvsiz  = parseTL('go-kamu-psf-kdvsiz');
-
-  if (satisSartliDsf && satisAdet && gunlukSatis && kamuPsfKdvsiz) {
-    const fiss = ((satisAdet + mf) * satisSartliDsf) / (gunlukSatis * kamuPsfKdvsiz);
-    const fissYuvarla = (fiss % 1) >= 0.5 ? Math.ceil(fiss) : Math.floor(fiss);
-    document.getElementById('go-fatura-sure').value = fissYuvarla;
-  } else {
-    document.getElementById('go-fatura-sure').value = '';
-  }
-}
-
-function hesaplaOTS() {
-  const satisAdet   = parseFloat(document.getElementById('go-satis-adet').value) || 0;
-  const mf          = parseFloat(document.getElementById('go-mf').value) || 0;
-  const gunlukSatis = parseFloat(document.getElementById('go-gunluk-satis').value) || 0;
-
+function hesaplaOTSP(p) {
+  const satisAdet   = parseFloat(document.getElementById(p+'-satis-adet').value) || 0;
+  const mf          = parseFloat(document.getElementById(p+'-mf').value) || 0;
+  const gunlukSatis = parseFloat(document.getElementById(p+'-gunluk-satis').value) || 0;
+  const el = document.getElementById(p+'-tuketim-sure');
   if (satisAdet && gunlukSatis) {
     const ots = (satisAdet + mf) / gunlukSatis;
-    const otsYuvarla = (ots % 1) >= 0.5 ? Math.ceil(ots) : Math.floor(ots);
-    document.getElementById('go-tuketim-sure').value = otsYuvarla;
+    el.value = (ots % 1) >= 0.5 ? Math.ceil(ots) : Math.floor(ots);
+  } else { el.value = ''; }
+  hesaplaCiktilarP(p);
+}
+
+function hesaplaFISSP(p) {
+  const satisSartliDsf = parseTL(p+'-satis-sartli-dsf');
+  const satisAdet      = parseFloat(document.getElementById(p+'-satis-adet').value) || 0;
+  const mf             = parseFloat(document.getElementById(p+'-mf').value) || 0;
+  const gunlukSatis    = parseFloat(document.getElementById(p+'-gunluk-satis').value) || 0;
+  const psfKdvsizFiss  = parseTL(p+'-psf-kdvsiz');
+  const el = document.getElementById(p+'-fatura-sure');
+  if (satisSartliDsf && satisAdet && gunlukSatis && psfKdvsizFiss) {
+    const fiss = ((satisAdet + mf) * satisSartliDsf) / (gunlukSatis * psfKdvsizFiss);
+    el.value = (fiss % 1) >= 0.5 ? Math.ceil(fiss) : Math.floor(fiss);
+  } else { el.value = ''; }
+}
+
+function hesaplaCiktilarP(p) {
+  const psfKdvsiz      = parseTL(p+'-psf-kdvsiz');
+  const satisSartliDsf = parseTL(p+'-satis-sartli-dsf');
+  const mf             = parseFloat(document.getElementById(p+'-mf').value) || 0;
+  const satisAdet      = parseFloat(document.getElementById(p+'-satis-adet').value) || 0;
+  const gunlukSatis    = parseFloat(document.getElementById(p+'-gunluk-satis').value) || 0;
+  const dsf            = parseTL(p+'-dsf');
+
+  psfKdvsiz && dsf ? setTL(p+'-alis-satis-kar-kamu',  (psfKdvsiz-dsf)*satisAdet) : clearEl(p+'-alis-satis-kar-kamu');
+  psfKdvsiz && dsf ? setTL(p+'-alis-satis-kar-elden', (psfKdvsiz-dsf)*satisAdet) : clearEl(p+'-alis-satis-kar-elden');
+  mf && psfKdvsiz ? setTL(p+'-mf-kar-kamu', psfKdvsiz*mf) : clearEl(p+'-mf-kar-kamu');
+
+  const vade          = parseFloat(document.getElementById(p+'-vade').value) || 0;
+  const faiz          = parseFloat(document.getElementById(p+'-faiz').value) || 0;
+  const tuketimSure   = parseFloat(document.getElementById(p+'-tuketim-sure').value) || 0;
+  const geriOdemeSure = parseFloat(document.getElementById(p+'-geri-odeme-sure-select').value) || 0;
+  const faturaSure    = parseFloat(document.getElementById(p+'-fatura-sure').value) || 0;
+
+  if (satisAdet && satisSartliDsf && faiz && vade && tuketimSure)
+    setTL(p+'-valor-tuketim-kamu', (satisSartliDsf*(satisAdet+mf))*(vade-tuketimSure)*faiz/36500);
+  else clearEl(p+'-valor-tuketim-kamu');
+
+  if (satisSartliDsf && faiz && vade && tuketimSure && faturaSure && gunlukSatis)
+    setTL(p+'-valor-geriodeme-kamu', (satisSartliDsf*(faturaSure*gunlukSatis))*(vade-tuketimSure)*faiz/36500);
+  else clearEl(p+'-valor-geriodeme-kamu');
+
+  const aK  = parseTL(p+'-alis-satis-kar-kamu');
+  const aE  = parseTL(p+'-alis-satis-kar-elden');
+  const mfK = parseTL(p+'-mf-kar-kamu');
+  const vT  = parseTL(p+'-valor-tuketim-kamu');
+  const vF  = parseTL(p+'-valor-geriodeme-kamu');
+  const mal = satisSartliDsf * (satisAdet + mf);
+
+  // Fatura süresinde satılan adet = faturaSure × gunlukSatis
+  const faturaAdet = faturaSure * gunlukSatis;
+  const faturaKar  = faturaAdet * (psfKdvsiz - satisSartliDsf);
+
+  setTL(p+'-toplam-kar-tuketim-kamu',    aK+mfK+vT);
+  setTL(p+'-toplam-kar-tuketim-elden',   aE+mfK+vT);
+  setTL(p+'-toplam-kar-geriodeme-kamu',  faturaKar+vF);
+  setTL(p+'-toplam-kar-geriodeme-elden', faturaKar+vF);
+
+  setPCT(p+'-alis-satis-kar-kamu-pct',        aK,           mal);
+  setPCT(p+'-alis-satis-kar-elden-pct',       aE,           mal);
+  setPCT(p+'-mf-kar-kamu-pct',               mfK,          mal);
+  setPCT(p+'-valor-tuketim-kamu-pct',        vT,           mal);
+  setPCT(p+'-valor-geriodeme-kamu-pct',      vF,           mal);
+  setPCT(p+'-toplam-kar-tuketim-kamu-pct',   aK+mfK+vT,    mal);
+  setPCT(p+'-toplam-kar-tuketim-elden-pct',  aE+mfK+vT,    mal);
+  setPCT(p+'-toplam-kar-geriodeme-kamu-pct', faturaKar+vF,  mal);
+  setPCT(p+'-toplam-kar-geriodeme-elden-pct',faturaKar+vF,  mal);
+}
+
+// ── ÜRÜN ADI GÜNCELLE ────────────────────────────────────────────────────
+const defaultIsimler = { 'u0': '📦 Benim Ürünüm', 'u1': '🏷️ Rakip Ürün 1', 'u2': '🏷️ Rakip Ürün 2' };
+
+function urunAdiGuncelle(p, deger) {
+  const isim = deger.trim() || defaultIsimler[p];
+  // Girdiler başlığı
+  const girdiBaslik = document.getElementById('baslik-girdi-' + p);
+  if (girdiBaslik) girdiBaslik.textContent = isim;
+  // Çıktılar başlığı
+  const ciktiBaslik = document.getElementById('baslik-cikti-' + p);
+  if (ciktiBaslik) ciktiBaslik.textContent = isim;
+}
+
+// ── TOGGLE MOD ───────────────────────────────────────────────────────────
+let modGeriOdemsiz = false;
+
+function dsfAyarla(geriOdemsiz) {
+  ['u0','u1','u2'].forEach(p => {
+    const el = document.getElementById(p + '-dsf');
+    if (!el) return;
+    if (geriOdemsiz) {
+      el.type = 'number';
+      el.step = '0.01';
+      el.removeAttribute('readonly');
+      el.classList.remove('dsf-input-otomatik');
+      el.classList.add('dsf-input-manuel');
+      el.placeholder = 'örn. 150.00';
+      el.value = '';
+    } else {
+      el.type = 'text';
+      el.removeAttribute('step');
+      el.setAttribute('readonly', true);
+      el.classList.remove('dsf-input-manuel');
+      el.classList.add('dsf-input-otomatik');
+      el.placeholder = 'Otomatik';
+      el.value = '';
+    }
+  });
+}
+
+function dsfManuelP(p) {
+  // Geri ödemesiz modda DSF manuel girildi — aşağı hesaplamaları tetikle
+  if (!modGeriOdemsiz) return;
+  hesaplaSatisSartliDSFP(p);
+  hesaplaCiktilarP(p);
+}
+
+function toggleMod() {
+  modGeriOdemsiz = !modGeriOdemsiz;
+  const knob = document.getElementById('toggle-knob');
+  const lblGO = document.getElementById('lbl-geri-odemeli');
+  const lblGOS = document.getElementById('lbl-geri-odemsiz');
+  const baslik = document.getElementById('acc-main-baslik');
+  if (modGeriOdemsiz) {
+    document.body.classList.add('mod-geri-odemsiz');
+    knob.style.left = '29px';
+    lblGO.style.color = '#b0b8c8';
+    lblGOS.style.color = '#007d0c';
+    if (baslik) baslik.textContent = 'Geri Ödemesiz Ürünler İçin Ticari Avantaj Hesaplama';
   } else {
-    document.getElementById('go-tuketim-sure').value = '';
+    document.body.classList.remove('mod-geri-odemsiz');
+    knob.style.left = '3px';
+    lblGO.style.color = '#007d0c';
+    lblGOS.style.color = '#b0b8c8';
+    if (baslik) baslik.textContent = 'Geri Ödemeli Ürünler İçin Ticari Avantaj Hesaplama';
   }
-  hesaplaCiktilar();
+  dsfAyarla(modGeriOdemsiz);
+  temizle();
 }
 
-
-function hesaplaGO() {
-  const psf          = v('go-psf');
-  const kki          = v('go-kki') / 100;
-  const vade         = vi('go-vade');
-  const mfAl         = v('go-mf-al') || 1;
-  const mfBed        = v('go-mf-bed') || 0;
-  const depoIsk      = v('go-depo-isk') / 100;
-  const siparisAdet  = v('go-siparis-adet') || 1;
-  const gunlukSatis  = v('go-gunluk-satis') || 1;
-  const sgkGun       = getGeriOdemeSure() || 35;
-  const yillikFaiz   = v('go-faiz') || 0;
-  const dsf          = v('go-dsf');
-
-  if (!psf) { alert('Lütfen PSF girin.'); return; }
-  if (!dsf) { alert('DSF hesaplanamadı. Lütfen PSF girin.'); return; }
-  if (!kki && kki !== 0) { alert('Lütfen ürün tipini seçin.'); return; }
-
-  // Satış fiyatı (KDV hariç) = PSF / 1.10
-  const satisFiyatNet = psf / 1.10;
-
-  // SGK kamu fiyatı = PSF üzerinden KKİ düşülür
-  const kamufiyat = satisFiyatNet * (1 - kki);
-
-  // Alış: eczane DSF'den alır, MF ve depo iskontosu uygulanır
-  const mfCarpan = mfBed > 0 ? (mfAl + mfBed) / mfAl : 1;
-  const alisNetFinal = (dsf / mfCarpan) * (1 - depoIsk);
-
-  const toplamAlis  = alisNetFinal * siparisAdet;
-  const toplamSatis = kamufiyat * siparisAdet;
-  const brutKar     = toplamSatis - toplamAlis;
-  const brutKarOran = (brutKar / toplamAlis) * 100;
-
-  const stoktaBitisGun = siparisAdet / gunlukSatis;
-  const parasininGelisGunu = stoktaBitisGun + sgkGun;
-  const valorGun = vade - parasininGelisGunu;
-  const valorTL = yillikFaiz > 0 ? (toplamAlis * yillikFaiz * Math.abs(valorGun)) / 36500 : 0;
-  const valorPozitif = valorGun >= 0;
-
-  const toplamKarlilik = brutKar + (valorPozitif ? valorTL : -valorTL);
-
-  document.getElementById('go-result-grid').innerHTML =
-    card('Birim Alış (DSF)', fmt(dsf), 'Depocuya ödenen fiyat') +
-    card('Birim Alış (Net)', fmt(alisNetFinal), 'MF + depo iskontosu sonrası') +
-    card('SGK Kamu Fiyatı', fmt(kamufiyat), 'PSF/1.10 × (1-KKİ%)') +
-    card('Toplam Alış', fmt(toplamAlis), siparisAdet + ' adet') +
-    card('Toplam SGK Geliri', fmt(toplamSatis), siparisAdet + ' adet') +
-    card('Brüt Kar', fmt(brutKar), fmtP(brutKarOran), brutKar >= 0 ? 'positive' : 'negative');
-
-  document.getElementById('go-valor-value').textContent = fmt(valorTL) + (valorPozitif ? ' KAZANÇ' : ' KAYIP');
-  document.getElementById('go-valor-value').className = 'vb-value ' + (valorPozitif ? 'positive' : 'negative');
-  document.getElementById('go-valor-desc').innerHTML =
-    `Stok <b>${stoktaBitisGun.toFixed(0)} günde</b> tükeniyor. ` +
-    `SGK ödemesi ~<b>${parasininGelisGunu.toFixed(0)}. günde</b> geliyor. ` +
-    `Vade <b>${vade} gün</b>. ` +
-    (valorPozitif
-      ? `<b style="color:#00a672">+${valorGun.toFixed(0)} gün valör avantajı</b>`
-      : `<b style="color:#e63946">${Math.abs(valorGun).toFixed(0)} gün valör açığı</b>`);
-
-  document.getElementById('go-total').textContent = fmt(toplamKarlilik);
-  document.getElementById('go-results').classList.add('show');
+// ── TEMİZLE ──────────────────────────────────────────────────────────────
+function temizle() {
+  const kapsam = document;
+  kapsam.querySelectorAll('input:not([readonly]), select').forEach(el => {
+    if (el.tagName === 'SELECT') el.selectedIndex = 0;
+    else el.value = '';
+  });
+  // Readonly (otomatik) alanları da temizle
+  kapsam.querySelectorAll('input[readonly]').forEach(el => {
+    el.value = '';
+    el.style.color = '#007d0c';
+    el.style.borderColor = '#007d0c';
+    el.style.background = '#f0fdf8';
+  });
+  // PCT alanlarını temizle
+  kapsam.querySelectorAll('.cikti-pct').forEach(el => {
+    el.value = '';
+    el.style.color = '#6366f1';
+    el.style.borderColor = '#6366f1';
+    el.style.background = '#f0f4ff';
+  });
+  // Başlıkları default'a döndür
+  ['u0','u1','u2'].forEach(p => {
+    const defaults = { 'u0': '📦 Benim Ürünüm', 'u1': '🏷️ Rakip Ürün 1', 'u2': '🏷️ Rakip Ürün 2' };
+    const g = document.getElementById('baslik-girdi-' + p);
+    const c = document.getElementById('baslik-cikti-' + p);
+    if (g) g.textContent = defaults[p];
+    if (c) c.textContent = defaults[p];
+  });
 }
 
-
-// ── GERİ ÖDEMESİZ HESAPLAMA ──────────────────────────────────────────────
-
+// ── u0 wrapper'lar ────────────────────────────────────────────────────────
+function psfDenKDVsiz()          { psfDenKDVsizP('u0'); }
+function hesaplaDSF(k)           { hesaplaDSFP('u0', k); }
+function refUygulamaSecim()      { refUygulamaSecimP('u0'); }
+function hesaplaKamuDSF(d)       { hesaplaKamuDSFP('u0', d); }
+function hesaplaSatisSartliDSF() { hesaplaSatisSartliDSFP('u0'); }
+function hesaplaOTS()            { hesaplaOTSP('u0'); }
+function hesaplaFISS()           { hesaplaFISSP('u0'); }
+function hesaplaCiktilar()       { hesaplaCiktilarP('u0'); }
 </script>
 </body>
 </html>
